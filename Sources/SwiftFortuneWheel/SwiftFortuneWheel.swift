@@ -407,7 +407,8 @@ public extension SwiftFortuneWheel {
     /// - Parameters:
     ///   - index: Index
     ///   - animationDuration: Animation duration
-    func rotate(toIndex index: Int, animationDuration: CFTimeInterval = 0.00001) {
+    ///   - timingFunction: Timing function
+    func rotate(toIndex index: Int, animationDuration: CFTimeInterval = 0.00001, timingFunction: CAMediaTimingFunction? = nil) {
         let _index = index < self.slices.count ? index : self.slices.count - 1
         let rotation = 360.0 - computeRadian(from: _index)
         guard animator.currentRotationPosition != rotation else { return }
@@ -415,6 +416,7 @@ public extension SwiftFortuneWheel {
         self.animator.addRotationAnimation(fullRotationsCount: 0,
                                            animationDuration: animationDuration,
                                            rotationOffset: rotation,
+                                           timingFunction: timingFunction,
                                            completionBlock: nil)
     }
     
@@ -423,12 +425,13 @@ public extension SwiftFortuneWheel {
     /// - Parameters:
     ///   - rotationOffset: Rotation offset
     ///   - animationDuration: Animation duration
-    func rotate(rotationOffset: CGFloat, animationDuration: CFTimeInterval = 0.00001) {
+    func rotate(rotationOffset: CGFloat, animationDuration: CFTimeInterval = 0.00001, timingFunction: CAMediaTimingFunction? = nil) {
         guard animator.currentRotationPosition != rotationOffset else { return }
         self.stopRotation()
         self.animator.addRotationAnimation(fullRotationsCount: 0,
                                            animationDuration: animationDuration,
                                            rotationOffset: rotationOffset,
+                                           timingFunction: timingFunction,
                                            completionBlock: nil)
     }
     
@@ -439,11 +442,11 @@ public extension SwiftFortuneWheel {
     ///   - fullRotationsCount: Full rotations until start deceleration
     ///   - animationDuration: Animation duration
     ///   - completion: Completion handler
-    func startRotationAnimation(rotationOffset: CGFloat, fullRotationsCount: Int = 13, animationDuration: CFTimeInterval = 5.000, _ completion: ((Bool) -> Void)?) {
+    func startRotationAnimation(rotationOffset: CGFloat, fullRotationsCount: Int = 13, animationDuration: CFTimeInterval = 5.000, timingFunction: CAMediaTimingFunction? = nil, _ completion: ((Bool) -> Void)?) {
         
         DispatchQueue.main.async {
             self.stopRotation()
-            self.animator.addRotationAnimation(fullRotationsCount: fullRotationsCount, animationDuration: animationDuration, rotationOffset: rotationOffset, completionBlock: completion, onEdgeCollision: { [weak self] progress in                        self?.impactIfNeeded(for: .edge)
+            self.animator.addRotationAnimation(fullRotationsCount: fullRotationsCount, animationDuration: animationDuration, rotationOffset: rotationOffset, timingFunction: timingFunction, completionBlock: completion, onEdgeCollision: { [weak self] progress in                        self?.impactIfNeeded(for: .edge)
                 self?.onEdgeCollision?(progress)
             })
             { [weak self] (progress) in
