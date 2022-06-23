@@ -462,12 +462,13 @@ public extension SwiftFortuneWheel {
     ///   - fullRotationsUntilFinish: Full rotations until start deceleration
     ///   - animationDuration: Animation duration
     ///   - completion: Completion handler
-    func startRotationAnimation(finishIndex: Int, fullRotationsCount: Int = 13, animationDuration: CFTimeInterval = 5.000, _ completion: ((Bool) -> Void)?) {
+    func startRotationAnimation(finishIndex: Int, fullRotationsCount: Int = 13, animationDuration: CFTimeInterval = 5.000, timingFunction: CAMediaTimingFunction? = nil, _ completion: ((Bool) -> Void)?) {
         let _index = finishIndex < self.slices.count ? finishIndex : self.slices.count - 1
         let rotation = 360.0 - computeRadian(from: _index)
         self.startRotationAnimation(rotationOffset: rotation,
                                     fullRotationsCount: fullRotationsCount,
                                     animationDuration: animationDuration,
+                                    timingFunction: timingFunction,
                                     completion)
     }
     
@@ -478,12 +479,12 @@ public extension SwiftFortuneWheel {
     ///   - continuousRotationTime: Full rotation time in seconds before stops
     ///   - continuousRotationSpeed: Rotation speed
     ///   - completion: Completion handler
-    func startRotationAnimation(finishIndex: Int, continuousRotationTime: Int, continuousRotationSpeed: CGFloat = 4, _ completion: ((Bool) -> Void)?) {
+    func startRotationAnimation(finishIndex: Int, continuousRotationTime: Int, continuousRotationSpeed: CGFloat = 4, timingFunction: CAMediaTimingFunction? = nil, _ completion: ((Bool) -> Void)?) {
         let _index = finishIndex < self.slices.count ? finishIndex : self.slices.count - 1
         self.startContinuousRotationAnimation(with: continuousRotationSpeed)
         let deadline = DispatchTime.now() + DispatchTimeInterval.seconds(continuousRotationTime)
         DispatchQueue.main.asyncAfter(deadline: deadline) {
-            self.startRotationAnimation(finishIndex: _index) { (finished) in
+            self.startRotationAnimation(finishIndex: _index, timingFunction: timingFunction) { (finished) in
                 completion?(finished)
             }
         }
@@ -619,8 +620,8 @@ public extension SwiftFortuneWheel {
     ///   - finishIndex: finished at index
     ///   - completion: completion
     @available(*, deprecated, message: "Use startRotationAnimation(finishIndex:continuousRotationTime:completion:) instead")
-    func startAnimating(indefiniteRotationTimeInSeconds: Int, finishIndex: Int, _ completion: ((Bool) -> Void)?) {
-        self.startRotationAnimation(finishIndex: finishIndex, continuousRotationTime: indefiniteRotationTimeInSeconds, completion)
+    func startAnimating(indefiniteRotationTimeInSeconds: Int, finishIndex: Int, timingFunction: CAMediaTimingFunction? = nil, _ completion: ((Bool) -> Void)?) {
+        self.startRotationAnimation(finishIndex: finishIndex, continuousRotationTime: indefiniteRotationTimeInSeconds, timingFunction: timingFunction, completion)
     }
     
     /// Starts rotation animation and stops rotation at the specified index and rotation angle offset
